@@ -151,6 +151,7 @@ jobs:
           echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
           chown -R builder:builder /tmp/aur-repo
           chown -R builder:builder "${GITHUB_WORKSPACE}"
+          git config --global --add safe.directory /tmp/aur-repo
           sudo -u builder env HOME=/home/builder VER="${VERSION}" bash -lc "cd /tmp/aur-repo && cp '${GITHUB_WORKSPACE}/PKGBUILD' . && cp '${GITHUB_WORKSPACE}/pbwrap.install' . && cp '${GITHUB_WORKSPACE}/update_pkgbuild.py' . && python update_pkgbuild.py && makepkg --printsrcinfo > .SRCINFO"
       - name: Push to AUR
         env:
