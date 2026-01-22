@@ -132,7 +132,7 @@ jobs:
           if [[ -n "$AUR_SSH_KNOWN_HOSTS" ]]; then
             printf "%s\n" "$AUR_SSH_KNOWN_HOSTS" | tr -d '\r' > ~/.ssh/known_hosts
           else
-            ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
+            ssh-keyscan -t rsa,ecdsa,ed25519 aur.archlinux.org >> ~/.ssh/known_hosts
           fi
 
       - name: Clone AUR repo
