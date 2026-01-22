@@ -137,7 +137,7 @@ jobs:
 
       - name: Clone AUR repo
         env:
-          GIT_SSH_COMMAND: "ssh -i ~/.ssh/aur -o UserKnownHostsFile=~/.ssh/known_hosts -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes"
+          GIT_SSH_COMMAND: "ssh -i ~/.ssh/aur -o UserKnownHostsFile=~/.ssh/known_hosts -o StrictHostKeyChecking=accept-new -o IdentitiesOnly=yes"
         run: |
           git clone ssh://aur@aur.archlinux.org/pbwrap.git /tmp/aur-repo
 
@@ -156,7 +156,7 @@ jobs:
 
       - name: Push to AUR
         env:
-          GIT_SSH_COMMAND: "ssh -i ~/.ssh/aur -o UserKnownHostsFile=~/.ssh/known_hosts -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes"
+          GIT_SSH_COMMAND: "ssh -i ~/.ssh/aur -o UserKnownHostsFile=~/.ssh/known_hosts -o StrictHostKeyChecking=accept-new -o IdentitiesOnly=yes"
         run: |
           cd /tmp/aur-repo
           git add PKGBUILD .SRCINFO pbwrap.install
