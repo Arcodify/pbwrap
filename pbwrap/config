@@ -1,9 +1,0 @@
-[core]
-	repositoryformatversion = 0
-	filemode = true
-	bare = true
-[remote "origin"]
-	url = file:///home/scelester/Container/ProjectD/Arcodify/pbwrapper
-	tagOpt = --no-tags
-	fetch = +refs/*:refs/*
-	mirror = true

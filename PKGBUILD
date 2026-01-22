@@ -6,20 +6,22 @@ arch=('x86_64' 'aarch64')
 depends=('bash' 'curl' 'unzip' 'jq' 'rsync' 'systemd')
 license=('GPL3')
 install=pbwrap.install
-source=("pbwrap::git+file://${startdir}"
-  "pbwrap.install")
-md5sums=('SKIP'
-  'SKIP')
+source=("https://github.com/Arcodify/pbwrap/archive/refs/tags/v${pkgver}.tar.gz"
+        "pbwrap.install")
+sha256sums=('SKIP'
+            'SKIP')
 
 build() {
   : # no build step
 }
 
 package() {
+  local srcdir_repo="$srcdir/${pkgname}-${pkgver}"
+
   install -d "$pkgdir/opt/pbwrap" "$pkgdir/etc/pbwrap/instances.d" "$pkgdir/opt/pb_apps" "$pkgdir/usr/bin" "$pkgdir/usr/lib/systemd/system"
 
   # Copy repo, exclude git metadata
-  rsync -a --delete --exclude '.git' "$srcdir/pbwrap/" "$pkgdir/opt/pbwrap/"
+  rsync -a --delete --exclude '.git' "$srcdir_repo/" "$pkgdir/opt/pbwrap/"
 
   # Ensure versions.json exists
   if [[ ! -f "$pkgdir/opt/pbwrap/config/versions.json" && -f "$pkgdir/opt/pbwrap/config/versions.default.json" ]]; then
