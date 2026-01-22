@@ -10,14 +10,12 @@ Each PocketBase app runs as a **systemd template instance** (`pocketbase@<name>.
 ## Key Features
 
 * Create a reusable **PocketBase template** from an existing project directory
-
   * Copies the PocketBase binary
   * Optionally copies `migrations/` and `hooks/`
   * Excludes `pb_data/`
 * Create, list, remove, and manage **multiple PocketBase instances**
 * Run each instance as a **systemd template unit**
 * Download and pin a **specific PocketBase version per instance**
-
   * Versions are defined in `config/versions.json`
 * Store per-instance configuration in simple `.env` files
 * Designed for **VPS / server usage** (non-interactive, scriptable)
@@ -29,25 +27,21 @@ Each PocketBase app runs as a **systemd template instance** (`pocketbase@<name>.
 pbwrap uses fixed, predictable paths:
 
 * **pbwrap installation**
-
   ```
   /opt/pbwrap
   ```
 
 * **PocketBase application instances**
-
   ```
   /opt/pb_apps/<instance>
   ```
 
 * **Instance environment files**
-
   ```
   /etc/pbwrap/instances.d/<instance>.env
   ```
 
 * **systemd template unit**
-
   ```
   /etc/systemd/system/pocketbase@.service
   ```
@@ -73,42 +67,101 @@ apt-get update && apt-get install -y curl unzip jq rsync
 
 ---
 
-## Quick Start (on the server)
+## Installation
 
-### 1. Install dependencies
+### Debian/Ubuntu (via .deb package)
+
+#### 1. Install dependencies
 
 ```bash
-apt-get update && apt-get install -y curl unzip jq rsync
+sudo apt-get update && sudo apt-get install -y curl unzip jq rsync
+```
+
+#### 2. Download and install the latest release
+
+```bash
+# Download the latest .deb package
+wget https://github.com/Arcodify/pbwrap/releases/latest/download/pbwrap_0.1.0_all.deb
+
+# Install the package
+sudo dpkg -i pbwrap_0.1.0_all.deb
+
+# Fix any missing dependencies (if needed)
+sudo apt-get install -f
+```
+
+The `.deb` package automatically:
+* Installs pbwrap to `/opt/pbwrap`
+* Creates the `/usr/bin/pbwrap` symlink
+* Runs the post-install script to set up directories
+
+#### 3. Install the systemd unit
+
+```bash
+sudo pbwrap install-systemd
 ```
 
 ---
 
-### 2. Install pbwrap
+### Arch Linux (via AUR)
 
-From the extracted release directory:
+```bash
+# Using yay
+yay -S pbwrap
+
+# Or using paru
+paru -S pbwrap
+
+# Or manually
+git clone https://aur.archlinux.org/pbwrap.git
+cd pbwrap
+makepkg -si
+```
+
+After installation, install the systemd unit:
+
+```bash
+sudo pbwrap install-systemd
+```
+
+---
+
+### Manual Installation (from source)
+
+#### 1. Clone the repository
+
+```bash
+git clone https://github.com/Arcodify/pbwrap.git
+cd pbwrap
+```
+
+#### 2. Install dependencies
+
+```bash
+sudo apt-get update && sudo apt-get install -y curl unzip jq rsync
+```
+
+#### 3. Run the install script
 
 ```bash
 sudo ./install.sh
 ```
 
 This will:
-
 * Copy pbwrap to `/opt/pbwrap`
 * Symlink `pbwrap` to `/usr/local/bin/pbwrap`
 
----
-
-### 3. Install or refresh the systemd unit
+#### 4. Install the systemd unit
 
 ```bash
 sudo pbwrap install-systemd
 ```
 
-This installs the `pocketbase@.service` systemd template unit.
-
 ---
 
-### 4. (Optional) Initialize a template from an existing project
+## Quick Start (on the server)
+
+### 1. (Optional) Initialize a template from an existing project
 
 If you already have a PocketBase project directory:
 
@@ -120,7 +173,7 @@ This creates a reusable template used for future instances.
 
 ---
 
-### 5. Create a PocketBase instance
+### 2. Create a PocketBase instance
 
 Example:
 
@@ -142,7 +195,6 @@ sudo pbwrap create \
 ```
 
 This will:
-
 * Download the specified PocketBase version
 * Create `/opt/pb_apps/test`
 * Write configuration to `/etc/pbwrap/instances.d/test.env`
@@ -216,28 +268,6 @@ sudo pbwrap uninstall --force [--purge]
 
 ---
 
-## Arch Linux / pacman Packaging
-
-A `PKGBUILD` is included.
-
-### Build and install locally
-
-```bash
-makepkg -si
-```
-
-The package uses the current directory as its source via `git+file://`.
-
-After installation, run once:
-
-```bash
-sudo /opt/pbwrap/install.sh
-```
-
-This ensures required directories under `/etc` are created (safe to run multiple times).
-
----
-
 ## Remote Usage (SSH helper)
 
 pbwrap includes a helper script for running commands over SSH:
@@ -260,7 +290,6 @@ The script automatically runs `sudo pbwrap ...` on the remote host.
 
 * pbwrap is intentionally **non-interactive**
 * All state lives in:
-
   * `/opt/pb_apps`
   * `/etc/pbwrap`
 * systemd is the single source of truth for process management
