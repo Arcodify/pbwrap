@@ -1,0 +1,7 @@
+.DS_Store
+*.swp
+*.tmp
+*.log
+.env
+config/*.local.*
+templates/base/pb_data
