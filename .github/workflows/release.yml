@@ -151,11 +151,7 @@ jobs:
           echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
           chown -R builder:builder /tmp/aur-repo
           chown -R builder:builder "${GITHUB_WORKSPACE}"
-          sudo -u builder env HOME=/home/builder VER="${VERSION}" bash -lc "\
-            cd /tmp/aur-repo && \
-            cp '${GITHUB_WORKSPACE}/PKGBUILD' . && \
-            cp '${GITHUB_WORKSPACE}/pbwrap.install' . && \
-            python - <<'PY'\nimport os\nfrom pathlib import Path\nver = os.environ['VER']\np = Path('PKGBUILD')\nlines = p.read_text().splitlines()\nout = []\nfor line in lines:\n    if line.startswith('pkgver='):\n        out.append(f'pkgver={ver}')\n    elif line.startswith('pkgrel='):\n        out.append('pkgrel=1')\n    elif line.startswith('source=('):\n        out.append(f'source=(\"https://github.com/Arcodify/pbwrap/archive/refs/tags/v{ver}.tar.gz\" \"pbwrap.install\")')\n    elif line.startswith('sha256sums='):\n        out.append(\"sha256sums=('SKIP' 'SKIP')\")\n    else:\n        out.append(line)\np.write_text('\\n'.join(out) + '\\n')\nPY\n            makepkg --printsrcinfo > .SRCINFO"
+          sudo -u builder env HOME=/home/builder VER="${VERSION}" bash -lc "cd /tmp/aur-repo && cp '${GITHUB_WORKSPACE}/PKGBUILD' . && cp '${GITHUB_WORKSPACE}/pbwrap.install' . && python update_pkgbuild.py && makepkg --printsrcinfo > .SRCINFO"
 
       - name: Push to AUR
         env:
