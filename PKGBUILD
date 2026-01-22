@@ -1,15 +1,15 @@
 pkgname=pbwrap
 pkgver=0.1.0
 pkgrel=2
-pkgdesc="PocketBase instance manager (systemd, multi-instance)"
+pkgdesc="PocketBase instance manager"
 arch=('x86_64' 'aarch64')
 depends=('bash' 'curl' 'unzip' 'jq' 'rsync' 'systemd')
-license=('MIT')
+license=('GPL3')
 install=pbwrap.install
 source=("pbwrap::git+file://${startdir}"
-        "pbwrap.install")
+  "pbwrap.install")
 md5sums=('SKIP'
-         'SKIP')
+  'SKIP')
 
 build() {
   : # no build step
