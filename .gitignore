@@ -5,5 +5,8 @@ src/
 *.tar.zst
 .SRCINFO
 
+# Local git checkout produced by makepkg source ("pbwrap::git+...") when run in-tree
+/pbwrap/
+
 # Misc
 .DS_Store
