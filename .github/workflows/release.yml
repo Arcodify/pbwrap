@@ -130,12 +130,14 @@ jobs:
           echo "$AUR_SSH_PRIVATE_KEY" > ~/.ssh/aur
           chmod 600 ~/.ssh/aur
           if [[ -n "$AUR_SSH_KNOWN_HOSTS" ]]; then
-            echo "$AUR_SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+            printf "%s\n" "$AUR_SSH_KNOWN_HOSTS" | tr -d '\r' > ~/.ssh/known_hosts
           else
             ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
           fi
 
       - name: Clone AUR repo
+        env:
+          GIT_SSH_COMMAND: "ssh -i ~/.ssh/aur -o UserKnownHostsFile=~/.ssh/known_hosts -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes"
         run: |
           git clone ssh://aur@aur.archlinux.org/pbwrap.git /tmp/aur-repo
 
@@ -154,7 +156,7 @@ jobs:
 
       - name: Push to AUR
         env:
-          GIT_SSH_COMMAND: "ssh -i ~/.ssh/aur -o StrictHostKeyChecking=yes"
+          GIT_SSH_COMMAND: "ssh -i ~/.ssh/aur -o UserKnownHostsFile=~/.ssh/known_hosts -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes"
         run: |
           cd /tmp/aur-repo
           git add PKGBUILD .SRCINFO pbwrap.install
