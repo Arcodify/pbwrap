@@ -84,6 +84,8 @@ jobs:
           fetch-depth: 0
       - name: Build pkg.tar.zst
         run: |
+          useradd -m builder || true
+          echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
           chown -R builder:builder "${GITHUB_WORKSPACE}"
           sudo -u builder env HOME=/home/builder bash -lc "cd '${GITHUB_WORKSPACE}' && makepkg -C --syncdeps --noconfirm --clean"
       - name: Upload Arch package
@@ -145,6 +147,8 @@ jobs:
         env:
           VERSION: ${{ steps.aurvars.outputs.version }}
         run: |
+          useradd -m builder || true
+          echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
           chown -R builder:builder /tmp/aur-repo
           chown -R builder:builder "${GITHUB_WORKSPACE}"
           sudo -u builder env HOME=/home/builder bash -lc "\
