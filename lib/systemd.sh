@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
-. "$(dirname "$0")/common.sh"
+
+LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$LIB_DIR/common.sh"
 
 svc_name() { echo "pocketbase@$1"; }
 
@@ -31,6 +33,7 @@ ReadWritePaths=/opt/pb_apps/%i
 [Install]
 WantedBy=multi-user.target
 UNITEOF
+  chmod 0644 "$unit"
 
   systemctl daemon-reload
   echo "Installed: $unit"
@@ -50,3 +53,6 @@ svc_stop_disable() {
 
 svc_status() { systemctl status "$(svc_name "$1")" --no-pager; }
 svc_logs() { journalctl -u "$(svc_name "$1")" -n 200 --no-pager; }
+svc_start() { systemctl start "$(svc_name "$1")"; }
+svc_stop() { systemctl stop "$(svc_name "$1")" || true; }
+svc_restart() { systemctl restart "$(svc_name "$1")"; }

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
-. "$(dirname "$0")/common.sh"
+
+LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$LIB_DIR/common.sh"
 
 pb_download_version() {
   local version="$1" outdir="$2"
@@ -10,6 +12,7 @@ pb_download_version() {
   url="https://github.com/pocketbase/pocketbase/releases/download/v${version}/${zip}"
 
   tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' EXIT
   mkdir -p "$outdir"
 
   echo "Downloading PocketBase v${version} (${arch})"
@@ -19,4 +22,5 @@ pb_download_version() {
 
   install -m 0755 "$tmp/unz/pocketbase" "$outdir/pocketbase"
   rm -rf "$tmp"
+  trap - EXIT
 }
