@@ -41,10 +41,10 @@ jobs:
 
           # Create post-install script to bootstrap dirs/unit
           cat > /tmp/postinst <<'POSTINST'
-#!/usr/bin/env bash
-set -e
-[ -x /opt/pbwrap/install.sh ] && /opt/pbwrap/install.sh || true
-POSTINST
+          #!/usr/bin/env bash
+          set -e
+          [ -x /opt/pbwrap/install.sh ] && /opt/pbwrap/install.sh || true
+          POSTINST
           chmod +x /tmp/postinst
 
       - name: Build .deb with fpm
