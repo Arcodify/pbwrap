@@ -73,21 +73,21 @@ jobs:
     container:
       image: archlinux:latest
     steps:
-      - name: Install base-devel
+      - name: Install base-devel and dependencies
         run: |
           pacman -Syu --noconfirm base-devel git sudo python
           useradd -m builder
           echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Build pkg.tar.zst
         run: |
-          useradd -m builder || true
-          echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
           chown -R builder:builder "${GITHUB_WORKSPACE}"
-          sudo -u builder env HOME=/home/builder bash -lc "cd '${GITHUB_WORKSPACE}' && makepkg -C --syncdeps --noconfirm --clean"
+          sudo -u builder env HOME=/home/builder bash -lc "cd '${GITHUB_WORKSPACE}' && makepkg -C --syncdeps --noconfirm --clean"   
       - name: Upload Arch package
         uses: softprops/action-gh-release@v1
         with:
