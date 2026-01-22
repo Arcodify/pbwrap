@@ -84,8 +84,8 @@ jobs:
           fetch-depth: 0
       - name: Build pkg.tar.zst
         run: |
-          chown -R builder:builder /__w/pbwrapper/pbwrapper
-          su builder -c "cd /__w/pbwrapper/pbwrapper && makepkg -C --syncdeps --noconfirm --clean"
+          chown -R builder:builder "${GITHUB_WORKSPACE}"
+          su builder -c "cd '${GITHUB_WORKSPACE}' && makepkg -C --syncdeps --noconfirm --clean"
       - name: Upload Arch package
         uses: softprops/action-gh-release@v1
         with:
@@ -144,8 +144,8 @@ jobs:
           VERSION: ${{ steps.aurvars.outputs.version }}
         run: |
           cd /tmp/aur-repo
-          cp /__w/pbwrapper/pbwrapper/PKGBUILD .
-          cp /__w/pbwrapper/pbwrapper/pbwrap.install .
+          cp "${GITHUB_WORKSPACE}/PKGBUILD" .
+          cp "${GITHUB_WORKSPACE}/pbwrap.install" .
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
           sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
           sed -i "s#^source=.*#source=(\"https://github.com/Arcodify/pbwrap/archive/refs/tags/v${VERSION}.tar.gz\" \"pbwrap.install\")#" PKGBUILD
