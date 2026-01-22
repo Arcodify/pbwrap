@@ -85,7 +85,7 @@ jobs:
       - name: Build pkg.tar.zst
         run: |
           chown -R builder:builder "${GITHUB_WORKSPACE}"
-          su builder -c "cd '${GITHUB_WORKSPACE}' && makepkg -C --syncdeps --noconfirm --clean"
+          sudo -u builder env HOME=/home/builder bash -lc "cd '${GITHUB_WORKSPACE}' && makepkg -C --syncdeps --noconfirm --clean"
       - name: Upload Arch package
         uses: softprops/action-gh-release@v1
         with:
@@ -145,14 +145,17 @@ jobs:
         env:
           VERSION: ${{ steps.aurvars.outputs.version }}
         run: |
-          cd /tmp/aur-repo
-          cp "${GITHUB_WORKSPACE}/PKGBUILD" .
-          cp "${GITHUB_WORKSPACE}/pbwrap.install" .
-          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
-          sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
-          sed -i "s#^source=.*#source=(\"https://github.com/Arcodify/pbwrap/archive/refs/tags/v${VERSION}.tar.gz\" \"pbwrap.install\")#" PKGBUILD
-          sed -i "s/^sha256sums=.*/sha256sums=('SKIP' 'SKIP')/" PKGBUILD
-          makepkg --printsrcinfo > .SRCINFO
+          chown -R builder:builder /tmp/aur-repo
+          chown -R builder:builder "${GITHUB_WORKSPACE}"
+          sudo -u builder env HOME=/home/builder bash -lc "\
+            cd /tmp/aur-repo && \
+            cp '${GITHUB_WORKSPACE}/PKGBUILD' . && \
+            cp '${GITHUB_WORKSPACE}/pbwrap.install' . && \
+            sed -i 's/^pkgver=.*/pkgver=${VERSION}/' PKGBUILD && \
+            sed -i 's/^pkgrel=.*/pkgrel=1/' PKGBUILD && \
+            sed -i 's#^source=.*#source=(\"https://github.com/Arcodify/pbwrap/archive/refs/tags/v${VERSION}.tar.gz\" \"pbwrap.install\")#' PKGBUILD && \
+            sed -i \"s/^sha256sums=.*/sha256sums=('SKIP' 'SKIP')/\" PKGBUILD && \
+            makepkg --printsrcinfo > .SRCINFO"
 
       - name: Push to AUR
         env:
